@@ -37,7 +37,8 @@ app.post("/addcontato", (req, res) => {
 
 app.put("/updatecontato", (req, res) => {
     const updateContato = req.body
-    knex("contato").where(updateContato.idcontato).update(updateContato)
+    const idcontato = updateContato.idcontato
+    knex("contato").where(idcontato).update(updateContato)
         .catch(err=>{
             res.status(500)
             console.log(err)
