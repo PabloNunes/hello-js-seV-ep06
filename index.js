@@ -4,7 +4,9 @@ const morgan = require("morgan")
 const bodyParser = require("body-parser")
 const cfg = require("./knexfile")
 const knex = require("knex")(cfg.development)
+const cors = require("cors")
 
+app.use(cors())
 app.use(express.static("public"))
 app.use(morgan("dev"))
 app.use(bodyParser.urlencoded())
@@ -20,7 +22,6 @@ app.get("/listpessoas", (req,res) =>{
 
 app.get("/selectpessoas/:id", (req,res) =>{
     const selectContato = req.params.id
-    console.log(selectContato)
     knex("contato").select().where("idcontato", selectContato).then(ret => {
         res.send(ret)
     }).catch(err => {
@@ -49,9 +50,9 @@ app.put("/updatecontato", (req, res) => {
         })
 })
 
-app.delete("/deletecontato/", (req, res) =>{
-    const selectContato = req.params.id
-    knex("contato").del().where("idcontato", id).catch(err => {
+app.delete("/:iddelete", (req, res) =>{
+    const selectContato = req.params.iddelete
+    knex("contato").del().where("idcontato", selectContato).catch(err => {
         res.status(500).send(err)
         console.log(err)
     })
