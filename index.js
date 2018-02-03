@@ -1,10 +1,13 @@
-const app = require("express")
+const express = require("express")
+const app = express()
 const morgan = require("morgan")
 const bodyParser = require("body-parser")
+const cfg = require("./knexfile")
+const knex = require("knex")(cfg.development)
 
 app.use(express.static("public"))
 app.use(morgan("dev"))
-app.user(bodyParser.urlencoded())
+app.use(bodyParser.urlencoded())
 
 app.get("/listpessoas", (req,res) =>{
     knex("contato").select().then(ret => {
@@ -15,9 +18,10 @@ app.get("/listpessoas", (req,res) =>{
     })
 })
 
-app.get("/selectpessoas", (req,res) =>{
-    const selectContato = req.query
-    knex("contato").select().where(selectContato).then(ret => {
+app.get("/selectpessoas/:id", (req,res) =>{
+    const selectContato = req.params.id
+    console.log(selectContato)
+    knex("contato").select().where("idcontato", selectContato).then(ret => {
         res.send(ret)
     }).catch(err => {
         res.status(500).send(err)
@@ -45,9 +49,9 @@ app.put("/updatecontato", (req, res) => {
         })
 })
 
-app.delete("/deletecontato/:id", (req, res) =>{
-    const selectContato = req.params.idcontato
-    knex("contato").del().where(selectContato).catch(err => {
+app.delete("/deletecontato/", (req, res) =>{
+    const selectContato = req.params.id
+    knex("contato").del().where("idcontato", id).catch(err => {
         res.status(500).send(err)
         console.log(err)
     })
